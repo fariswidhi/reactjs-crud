@@ -8,7 +8,8 @@ export default class Edit extends Component {
     
       this.state = {
          name: '',
-         date: ''
+         date: '',
+         id : ''
       };
       this.handleSubmit = this.handleSubmit.bind(this);
       this.handleInputChange = this.handleInputChange.bind(this);
@@ -31,7 +32,18 @@ export default class Edit extends Component {
    		// console.log(id);
    		const url = "http://localhost:3000/movies/"+id;
    		axios.get(url).then((res)=>{
-   			// console.log(res);
+   			// console.log(res.data.data);
+            const data = res.data.data.movie;
+            const realesed_on = data.realesed_on;
+            let date = new Date(realesed_on);
+            date = date.getFullYear()+'-'+date.getMonth()+'-'+date.getDate();
+            this.setState({
+                name:data.name,
+                date:date,
+                id:id
+            });
+
+            console.log();
    		});
     }
 
@@ -45,19 +57,21 @@ export default class Edit extends Component {
         });
         // this.setState({name:event.target.value,date:event.target.value});
     }
-    handleSubmit(event) {
+    handleSubmit(event,_id) {
+
         // alert('A name was submited'+this.state.name+' '+this.state.date);
         const name = this.state.name;
         const date = this.state.date;
         const { history } = this.props;
+        const id = _id;
 
         if(name.length == 0 || date.length == 0){
             alert("Tidak Boleh Kosong");
         }
         else{
-            const url = "http://localhost:3000/movies/store";
+            const url = "http://localhost:3000/movies/"+id;
             
-            axios.post(url,{
+            axios.put(url,{
                 name: name,
                 realesed_on: date,
                 headers: {
@@ -72,6 +86,7 @@ export default class Edit extends Component {
             });
             
         }
+        // alert(id);
         event.preventDefault();
     }
     
@@ -80,7 +95,7 @@ export default class Edit extends Component {
       <div>
 
         <Link to="/"><Button color="success">Back</Button></Link>
-        <Form onSubmit={this.handleSubmit}>
+        <Form onSubmit={(e)=>this.handleSubmit(e,this.state.id)}>
             <FormGroup>
                 <Label>Name</Label>
                 <Input type="text" placeholder="Name" value={this.state.name} name="name" onChange={this.handleInputChange}/>
