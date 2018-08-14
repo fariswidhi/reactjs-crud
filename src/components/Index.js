@@ -57,9 +57,11 @@ export default class Index extends Component {
   }
 
   render() {
-    const data = this.state.data.map((item,i)=>{
+    let data = "";
+    if (this.state.data.length > 0) {
+     data = this.state.data.map((item,i)=>{
       return (
-          <ListGroupItem>
+          <ListGroupItem key={item._id}>
             {item.name}
             <br/>
             {item.realesed_on}
@@ -76,9 +78,15 @@ export default class Index extends Component {
         )
     });
 
+    }
+    else{
+      console.log("ok");
+       data = <ListGroupItem><center>Tidak Ada Data</center></ListGroupItem>;
+    }
+
     return (
       <div>
-        <Link to="/create"><Button color="success">Create</Button>
+        <Link to="/create"><Button color="success">Tambah</Button>
 
         </Link>
         <br/>
